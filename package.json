@@ -16,9 +16,7 @@
   "main": "./lib/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
-    "lint": "tslint -c tslint.json src/**/*.ts",
-    "prepublish": "npm run build"
+    "dev": "nodemon --exec node ./src/index.ts"
   },
   "dependencies": {
     "tslint": "^5.20.1",
@@ -32,7 +30,6 @@
   "devDependencies": {
     "@types/node": "^26.4.1",
     "nodemon": "^3.1.14",
-    "ts-node": "^10.9.2",
     "tsc": "^2.0.4"
   }
 }

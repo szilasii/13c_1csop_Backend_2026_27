@@ -2,4 +2,4 @@ export function sayHelloWorld(world: string) {
   return `Hello ${world}`;
 }
 
-console.log(sayHelloWorld("World"));
+console.log(sayHelloWorld("Worlde!"));
