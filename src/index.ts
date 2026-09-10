@@ -1,5 +1,16 @@
-export function sayHelloWorld(world: string) {
-  return `Hello ${world}`;
-}
+type szemely = {
+  name: string
+};
 
-console.log(sayHelloWorld("Worlde!"));
+type dolgozo =
+{dolgozoid: number};
+
+
+type dolgozoSzemely = szemely & dolgozo;
+
+const dolgozo1: dolgozoSzemely = {
+  name: "John Doe",
+  dolgozoid: 12345
+};
+
+console.log(dolgozo1);
