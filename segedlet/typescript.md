@@ -420,5 +420,510 @@ const worker: Worker = {
     employeeId: 1001
 };
 ```
+# 14. Függvények
+
+## Paraméterek típusozása
+
+```typescript
+function add(a: number, b: number): number {
+    return a + b;
+}
+```
+
+```typescript
+console.log(add(10, 20));
+```
+
+## void
+
+Ha a függvény nem ad vissza értéket:
+
+```typescript
+function printMessage(message: string): void {
+    console.log(message);
+}
+```
+
+## Több paraméter
+
+```typescript
+function createUser(
+    name: string,
+    age: number,
+    active: boolean
+): void {
+    console.log(name, age, active);
+}
+```
+
+---
+
+# 15. Opcionális paraméter
+
+```typescript
+function greet(name: string, title?: string): string {
+    if (title) {
+        return `Hello ${title} ${name}`;
+    }
+
+    return `Hello ${name}`;
+}
+```
+
+---
+
+# 16. Alapértelmezett paraméter
+
+```typescript
+function greet(name: string = "Guest"): string {
+    return `Hello ${name}`;
+}
+```
+
+---
+
+# 17. Arrow function
+
+```typescript
+const add = (a: number, b: number): number => {
+    return a + b;
+};
+```
+
+Rövid változat:
+
+```typescript
+const multiply = (a: number, b: number): number => a * b;
+```
+
+---
+
+# 18. Objektumok típusozása
+
+```typescript
+const user: {
+    id: number;
+    name: string;
+    active: boolean;
+} = {
+    id: 1,
+    name: "Anna",
+    active: true
+};
+```
+
+Nagyobb projektnél célszerű inkább `interface` vagy `type` használata.
+
+---
+
+# 19. Type assertion
+
+A type assertion segítségével jelezhetjük a TypeScriptnek, hogy egy értéket milyen típusként szeretnénk kezelni.
+
+```typescript
+const value: unknown = "Hello";
+
+const text = value as string;
+
+console.log(text.toUpperCase());
+```
+
+Másik szintaxis:
+
+```typescript
+const text = <string>value;
+```
+
+TSX/JSX környezetben az `as` szintaxis ajánlott.
+
+---
+
+# 20. Type narrowing
+
+A TypeScript képes egy union típus szűkítésére.
+
+```typescript
+function printValue(value: string | number): void {
+    if (typeof value === "string") {
+        console.log(value.toUpperCase());
+    } else {
+        console.log(value.toFixed(2));
+    }
+}
+```
+
+---
+
+# 21. Interface öröklés
+
+```typescript
+interface Person {
+    name: string;
+}
+
+interface Employee extends Person {
+    employeeId: number;
+}
+```
+
+```typescript
+const employee: Employee = {
+    name: "Anna",
+    employeeId: 1001
+};
+```
+
+---
+
+# 22. Osztályok
+
+```typescript
+class User {
+    name: string;
+    age: number;
+
+    constructor(name: string, age: number) {
+        this.name = name;
+        this.age = age;
+    }
+
+    introduce(): string {
+        return `My name is ${this.name}`;
+    }
+}
+```
+
+Használat:
+
+```typescript
+const user = new User("Anna", 25);
+
+console.log(user.introduce());
+```
+
+---
+
+# 23. public, private, protected
+
+```typescript
+class User {
+    public name: string;
+    private password: string;
+    protected role: string;
+
+    constructor(
+        name: string,
+        password: string,
+        role: string
+    ) {
+        this.name = name;
+        this.password = password;
+        this.role = role;
+    }
+}
+```
+
+A `private` csak az osztályon belül érhető el.
+
+A `protected` az osztályban és annak leszármazottaiban használható.
+
+---
+
+# 24. Getter és setter
+
+```typescript
+class User {
+    private _name: string;
+
+    constructor(name: string) {
+        this._name = name;
+    }
+
+    get name(): string {
+        return this._name;
+    }
+
+    set name(value: string) {
+        this._name = value;
+    }
+}
+```
+
+---
+
+# 25. Abstract class
+
+```typescript
+abstract class Animal {
+    abstract makeSound(): void;
+
+    move(): void {
+        console.log("Moving...");
+    }
+}
+```
+
+```typescript
+class Dog extends Animal {
+    makeSound(): void {
+        console.log("Woof!");
+    }
+}
+```
+
+---
+
+# 26. Generikusok
+
+A generikusok segítségével újrafelhasználható, típusbiztos kódot készíthetünk.
+
+```typescript
+function identity<T>(value: T): T {
+    return value;
+}
+```
+
+```typescript
+const numberValue = identity<number>(10);
+const textValue = identity<string>("Hello");
+```
+
+A TypeScript gyakran automatikusan kikövetkezteti a típust:
+
+```typescript
+const result = identity(100);
+```
+
+---
+
+# 27. Generikus tömb
+
+```typescript
+function getFirst<T>(items: T[]): T {
+    return items[0];
+}
+```
+
+```typescript
+const firstNumber = getFirst([10, 20, 30]);
+const firstName = getFirst(["Anna", "Béla"]);
+```
+
+---
+
+# 28. Generic interface
+
+```typescript
+interface ApiResponse<T> {
+    success: boolean;
+    data: T;
+    message?: string;
+}
+```
+
+```typescript
+interface User {
+    id: number;
+    name: string;
+}
+
+const response: ApiResponse<User> = {
+    success: true,
+    data: {
+        id: 1,
+        name: "Anna"
+    }
+};
+```
+
+---
+
+# 29. Utility Types
+
+## Partial
+
+Minden tulajdonság opcionális lesz.
+
+```typescript
+interface User {
+    id: number;
+    name: string;
+    email: string;
+}
+
+const updateUser: Partial<User> = {
+    name: "Béla"
+};
+```
+
+## Required
+
+Minden tulajdonság kötelező.
+
+```typescript
+const user: Required<User> = {
+    id: 1,
+    name: "Anna",
+    email: "anna@example.com"
+};
+```
+
+## Pick
+
+Csak meghatározott tulajdonságokat választ ki.
+
+```typescript
+type UserPreview = Pick<User, "id" | "name">;
+```
+
+## Omit
+
+Meghatározott tulajdonságokat kihagy.
+
+```typescript
+type UserWithoutId = Omit<User, "id">;
+```
+
+## Readonly
+
+```typescript
+type ReadonlyUser = Readonly<User>;
+```
+
+---
+
+# 30. keyof
+
+A `keyof` egy típus kulcsait adja vissza union formában.
+
+```typescript
+interface User {
+    id: number;
+    name: string;
+    email: string;
+}
+
+type UserKey = keyof User;
+```
+
+A `UserKey` értékei:
+
+```text
+"id" | "name" | "email"
+```
+
+---
+
+# 31. typeof
+
+A `typeof` segítségével egy meglévő változó típusából készíthetünk típust.
+
+```typescript
+const user = {
+    id: 1,
+    name: "Anna"
+};
+
+type User = typeof user;
+```
+
+---
+
+# 32. Null ellenőrzés
+
+```typescript
+function printName(name: string | null): void {
+    if (name !== null) {
+        console.log(name.toUpperCase());
+    }
+}
+```
+
+Optional chaining:
+
+```typescript
+user?.name
+```
+
+Nullish coalescing:
+
+```typescript
+const name = user?.name ?? "Unknown";
+```
+
+---
+
+# 33. Promise és async/await
+
+```typescript
+async function getUser(): Promise<string> {
+    return "Anna";
+}
+```
+
+```typescript
+async function main(): Promise<void> {
+    const name = await getUser();
+
+    console.log(name);
+}
+
+main();
+```
+### Promise órai kiegészítés
+
+```typescript
+interface IUser {
+  id:number,
+  name:string,
+  email:string,
+  age:number
+}
+
+
+const getUser = (): Promise<IUser> => {
+  return new Promise((resolve, reject) => {
+    const success = true
+    if (success) {
+      setTimeout(() => {
+        resolve({id:10,name:"sdfgd",email:"maci@vmi.hu",age:40})
+      }, 5000)
+    } else {
+      reject("Az User adatatok nem kerhetok le")
+    }
+  })
+}
+
+const getAdmin = (ws:number): Promise<IUser> => {
+  return new Promise((resolve, reject) => {
+    const success = true
+    if (success) {
+      setTimeout(() => {
+        resolve({id:10,name:"sdfgd",email:"maci@vmi.hu",age:40})
+      }, ws)
+    } else {
+      reject("Az admin adatatok nem kerhetok le")
+    }
+  })
+}
+
+// getUser().then((name:IUser) => {
+//   console.log("Name:",name)
+// }).catch((error) => {
+//   console.error("Error: ",error)
+// })
+
+const user = Promise.resolve({id:10,name:"sdfgd",email:"maci@vmi.hu",age:40})
+
+Promise.all([getUser(),getAdmin(3000)]).then(([user,admin]) => {
+    console.log("UserAdat: ",user)
+    console.log("adminAdat:", admin)
+})
+
+Promise.race([getUser(),getAdmin(2000)]).then((leggyorsabb) => {
+    console.log("UserAdat: ",leggyorsabb)
+  
+})
+```
 
 ---
