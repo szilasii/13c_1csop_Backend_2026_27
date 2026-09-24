@@ -894,6 +894,9 @@ const getUser = (): Promise<IUser> => {
   })
 }
 
+
+
+
 const getAdmin = (ws:number): Promise<IUser> => {
   return new Promise((resolve, reject) => {
     const success = true
@@ -924,6 +927,150 @@ Promise.race([getUser(),getAdmin(2000)]).then((leggyorsabb) => {
     console.log("UserAdat: ",leggyorsabb)
   
 })
+
+const getValami = <T>(data:T): Promise<T> => {
+  return new Promise((resolve) => {
+        resolve(data)
+  })
+}
+
+getValami<number>(42).then((num) => console.log(num.toFixed(2)));
+getValami<string>("hali").then((text) => console.log(text.length));
+
+```
+
+---
+
+# 34. Fetch használata TypeScriptben
+
+```typescript
+interface IUser {
+  id: number;
+  name: string;
+  email: string;
+}
+
+async function getUsers():Promise<IUser[]> {
+    const response = await fetch("https://example.com/api/users", {method : "POST",headers:{"Content-Type": "application/json"},body:JSON.stringify({id:1,name:"Bela",email:"bela@gmail.com"})});
+
+    if (!response.ok) {
+      throw new Error("HTTP Error")
+    }
+
+    const users : IUser[] = await response.json()
+    return users
+
+}
+
+
+  getUsers().then((v) => console.log(v)).catch((e) => console.log("hiba"))
+  
+try
+{ 
+  console.log(await getUsers())
+}catch {
+  console.log("hibak")
+}
+```
+
+Fontos: a `response.json()` futásidőben nem garantálja, hogy valóban a megadott típusú adat érkezett. A TypeScript típusok elsősorban fordítási időben segítenek.
+
+---
+# 35. Modulok
+
+## Export
+
+```typescript
+export interface User {
+    id: number;
+    name: string;
+}
+```
+
+```typescript
+default //alapértelmezett export 
+export function getUser(): User {
+    return {
+        id: 1,
+        name: "Anna"
+    };
+}
+```
+
+## Import
+
+```typescript
+import { User, getUser } from "./user.js";
+```
+
+Node.js + ESM/NodeNext konfiguráció esetén az import útvonalnál szükség lehet `.js` kiterjesztésre, miközben a forrásfájl `.ts`.
+Node és ts fordítás esetén a tsconfig.json-ban az alábbi opciok engedélyezésével a `.ts` kiterjesztés is használható.
+ "noEmit": true,   
+ "allowImportingTsExtensions" : true,
+
+
+---
+
+# 36. tsconfig.json
+
+Egy egyszerű Node.js TypeScript projekt például:
+
+```json
+{
+    "compilerOptions": {
+        "target": "ES2022",
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
+        "rootDir": "./src",
+        "outDir": "./dist",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true
+    },
+    "include": ["src"]
+}
+```
+
+## Fontosabb beállítások
+
+### target
+
+Meghatározza, milyen JavaScript verzióra fordítunk.
+
+```json
+"target": "ES2022"
+```
+
+### module
+
+Meghatározza a modulrendszert.
+
+```json
+"module": "NodeNext"
+```
+
+### rootDir
+
+A TypeScript forráskód helye.
+
+```json
+"rootDir": "./src"
+```
+
+### outDir
+
+A fordított JavaScript fájlok helye.
+
+```json
+"outDir": "./dist"
+```
+
+### strict
+
+Bekapcsolja a szigorú típusellenőrzést.
+
+```json
+"strict": true
 ```
 
 ---

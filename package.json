@@ -16,12 +16,11 @@
   "main": "./lib/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --exec node ./src/index.ts",
-    "dev-ts": "nodemon --exec npx tsx ./src/index.ts"
+    "dev": "nodemon --exec node ./src/app/server.ts",
+    "dev-ts": "nodemon --exec npx tsx ./src/app/server.ts"
   },
   "dependencies": {
-    "tslint": "^5.20.1",
-    "typescript": "^7.0.2"
+    "express": "^5.2.1"
   },
   "files": [
     "./bin/*",
@@ -29,8 +28,11 @@
   ],
   "typings": "./lib/index.d.ts",
   "devDependencies": {
+    "@types/express": "^5.0.6",
     "@types/node": "^26.4.1",
     "nodemon": "^3.1.14",
-    "tsc": "^2.0.4"
+    "tsc": "^2.0.4",
+    "tslint": "^5.20.1",
+    "typescript": "^7.0.2"
   }
 }
