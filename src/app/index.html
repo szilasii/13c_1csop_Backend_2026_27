@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <title>Termék szerkesztése</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            padding: 20px;
+        }
+        .form-container {
+            max-width: 500px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .form-group input[type="checkbox"] {
+            margin-right: 5px;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+        }
+        .submit-btn {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .submit-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <h2>Termék adatlap szerkesztése</h2>
+    <form action="http://localhost:3000/product" method="POST">
+        
+        <!-- Rejtett mező az ID-nak -->
+        <input type="hidden" name="id" value="1">
+
+        <div class="form-group">
+            <label for="name">Termék neve:</label>
+            <input type="text" id="name" name="name" value="Laptop Pro 15" required>
+        </div>
+
+        <div class="form-group">
+            <label for="category">Kategória:</label>
+            <input type="text" id="category" name="category" value="Laptop" required>
+        </div>
+
+        <div class="form-group">
+            <label for="brand">Márka:</label>
+            <input type="text" id="brand" name="brand" value="TechMaster" required>
+        </div>
+
+        <div class="form-group">
+            <label for="price">Ár (HUF):</label>
+            <input type="number" id="price" name="price" value="349990" min="0" required>
+        </div>
+
+        <div class="form-group">
+            <label for="stock">Készlet (db):</label>
+            <input type="number" id="stock" name="stock" value="12" min="0" required>
+        </div>
+
+        <div class="form-group">
+            <label for="rating">Értékelés (0-5):</label>
+            <input type="number" id="rating" name="rating" value="4.8" min="0" max="5" step="0.1" required>
+        </div>
+
+        <div class="form-group checkbox-group">
+            <input type="checkbox" id="active" name="active" value="true" checked>
+            <label for="active">Aktív (elérhető a boltban)</label>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Leírás:</label>
+            <textarea id="description" name="description" rows="4" required>Nagy teljesítményű 15 colos laptop munkára és játékra.</textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="image">Kép fájlneve:</label>
+            <input type="text" id="image" name="image" value="laptop-pro-15.jpg" required>
+        </div>
+
+        <button type="submit" class="submit-btn">Mentés</button>
+    </form>
+</div>
+
+</body>
+</html>

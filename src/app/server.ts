@@ -1,25 +1,11 @@
-import express from "express"
-import type { Request , Response } from "express"
-const app = express()
+import app from "./app.ts"
+import dotenv from "dotenv"
+dotenv.config()
 
-app.use(express.json())
+const PORT = process.env.PORT || 3001
 
 
-app.get("/",(_req:Request,res:Response) =>{
-    res.json({
-        message: "Hello, fut a szerver!"
-    })
-})
 
-app.post("/",(_req:Request,res:Response) => {
-    res.json({
-        message: "Hello, ez egy POST kérés!"
-    })
-})
-app.post("/a",(_req:Request,res:Response) => {
-    res.send("Szöveg")
-})
-
-app.listen(3000,()=>{
-    console.log("Fut a szerver!")
+app.listen(PORT,()=>{
+    console.log(`Fut a szerver a ${PORT}-on!`)
 })

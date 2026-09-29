@@ -20,6 +20,7 @@
     "dev-ts": "nodemon --exec npx tsx ./src/app/server.ts"
   },
   "dependencies": {
+    "body-parser": "^2.3.0",
     "express": "^5.2.1"
   },
   "files": [
@@ -28,8 +29,10 @@
   ],
   "typings": "./lib/index.d.ts",
   "devDependencies": {
+    "@types/body-parser": "^1.19.6",
     "@types/express": "^5.0.6",
     "@types/node": "^26.4.1",
+    "dotenv": "^18.0.4",
     "nodemon": "^3.1.14",
     "tsc": "^2.0.4",
     "tslint": "^5.20.1",
