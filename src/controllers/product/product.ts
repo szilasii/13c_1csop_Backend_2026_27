@@ -149,7 +149,7 @@ export class ProductManager {
 
   // Visszaadja az összes terméket tiszta IProduct tömbként (biztonságos exportáláshoz)
   get allProductsData(): IProduct[] {
-    return this._products.map(p => p.toJSON());
+    return this._products.map((p : Product) => p.toJSON());
   }
 
   // Visszaadja a belső Product példányok tömbjét (ha közvetlenül a metódusaikat akarjuk hívni)
@@ -160,12 +160,21 @@ export class ProductManager {
   // --- CRUD MŰVELETEK ---
 
   // Új termék hozzáadása
-  public addProduct(productData: Partial<Product>): void {
-  
+  public addProduct(productData: Partial<Product>): number {
+    const product = new Product(productData);
+    Object.keys(productData).forEach((key) => {
+      const propKey = key as keyof IProduct;
+      if (propKey !== 'id' && productData[propKey] !== undefined) {
+        // TypeScript típusbiztonság megtartásával dinamikusan beállítjuk az értéket
+        (product as any)[propKey] = productData[propKey];
+      }
+    });
+
     // Egyszerű ID generálás, ha nincs megadva
       const maxId = this._products.reduce((max, p) => p.id > max ? p.id : max, 0);
-      productData.id = maxId + 1;
-      this._products.push(productData as Product);
+      product.id = maxId + 1;
+      this._products.push(product as Product);
+      return product.id;
   }
 
   // Termék lekérése ID alapján
@@ -182,6 +191,7 @@ export class ProductManager {
       const propKey = key as keyof IProduct;
       if (propKey !== 'id' && updatedData[propKey] !== undefined) {
         // TypeScript típusbiztonság megtartásával dinamikusan beállítjuk az értéket
+        console.log(propKey, updatedData[propKey]); // Debugging line to check the property and its value
         (product as any)[propKey] = updatedData[propKey];
       }
     });

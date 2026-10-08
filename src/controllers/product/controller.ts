@@ -29,7 +29,7 @@ export const getProductById = (req:Request,res:Response):void => {
 }
 
 export const updateProduct = (req:Request,res:Response):void => {
-    const products = new ProductManager(data)
+    const products: ProductManager = new ProductManager(data)
     const productId: number = parseInt(req.params.id as string) 
     
     
@@ -42,8 +42,7 @@ export const updateProduct = (req:Request,res:Response):void => {
  // Check if the product exists
     const product = products.getProductById(productId)
     if (!product) {
-        products.addProduct(req.body)
-        res.send(products.allProductsData[products.allProductsData.length - 1]) // Return the newly added product
+        res.send(products.getProductById(products.addProduct(req.body))) // Return the newly added product
         return
     }
     const updatedProduct: Product = new Product(req.body)
@@ -51,10 +50,38 @@ export const updateProduct = (req:Request,res:Response):void => {
     res.send(products.allProductsData)
 }
 
+export const updateProductPatch = (req:Request,res:Response):void => {
+     if (!req.body || typeof req.body !== 'object') {
+        res.status(400).send("Invalid request body");
+        return;
+    }
+    const products = new ProductManager(data)
+    const productId: number = parseInt(req.params.id as string) 
+
+    const update = products.updateProduct(productId, req.body)
+     if (!update) {
+        res.status(404).send("Product not found")
+        return
+    }
+    res.send(products.getProductById(productId))
+}
+
+export const deleteProduct = (req:Request,res:Response):void => {
+    const products = new ProductManager(data)
+    const productId: number = parseInt(req.params.id as string) 
+    const deleted = products.deleteProduct(productId)   
+    if (!deleted) {
+        res.status(404).send("Product not found")
+        return
+    }
+    console.log(products.allProductsData) // Debugging line to confirm deletion
+    res.status(204).send()
+}
 
 const  checkRequiredFields = (body: IProduct,product: IProduct): boolean => {
-     // Exclude 'id' from required fields
-     const requiredFields = Object.keys(product).filter(key => key !== 'id')
-    console.log("Required fields:", requiredFields) // Debugging line to check the required fields
+    if (!body || typeof body !== 'object') {
+        return false;
+    }
+    const requiredFields = Object.keys(product).filter(key => key !== 'id')
     return requiredFields.every(field => body.hasOwnProperty(field));
 }
