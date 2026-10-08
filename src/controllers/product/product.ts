@@ -46,6 +46,7 @@ export class Product implements IProduct {
   // --- IProduct interface-ből adódó Getterek és Setterek ---
 
   get id(): number { return this._id; }
+  set id(value: number) { this._id = value; } // Bár az ID-t általában nem szabadna módosítani, de a setter itt van a teljes IProduct interface implementálásához
 
   get name(): string { return this._name; }
   set name(value: string) { this._name = value; }
@@ -134,4 +135,102 @@ export class Product implements IProduct {
   }
 }
 
+
+
+export class ProductManager {
+  // Belsőleg Product osztálypéldányok tömbjeként tároljuk a gazdag funkciók miatt
+  private _products: Product[] = [];
+
+  constructor(initialProducts: Partial<IProduct>[] = []) {
+    this._products = initialProducts.map(p => new Product(p));
+  }
+
+  // --- GETTEREK ---
+
+  // Visszaadja az összes terméket tiszta IProduct tömbként (biztonságos exportáláshoz)
+  get allProductsData(): IProduct[] {
+    return this._products.map(p => p.toJSON());
+  }
+
+  // Visszaadja a belső Product példányok tömbjét (ha közvetlenül a metódusaikat akarjuk hívni)
+  get products(): Product[] {
+    return this._products;
+  }
+
+  // --- CRUD MŰVELETEK ---
+
+  // Új termék hozzáadása
+  public addProduct(productData: Partial<Product>): void {
+  
+    // Egyszerű ID generálás, ha nincs megadva
+      const maxId = this._products.reduce((max, p) => p.id > max ? p.id : max, 0);
+      productData.id = maxId + 1;
+      this._products.push(productData as Product);
+  }
+
+  // Termék lekérése ID alapján
+  public getProductById(id: number): Product | undefined {
+    return this._products.find(p => p.id === id);
+  }
+
+  // Termék frissítése
+  public updateProduct(id: number, updatedData: Partial<IProduct>): boolean {
+    const product = this.getProductById(id);
+    if (!product) return false;
+
+    Object.keys(updatedData).forEach((key) => {
+      const propKey = key as keyof IProduct;
+      if (propKey !== 'id' && updatedData[propKey] !== undefined) {
+        // TypeScript típusbiztonság megtartásával dinamikusan beállítjuk az értéket
+        (product as any)[propKey] = updatedData[propKey];
+      }
+    });
+
+    return true;
+  }
+
+  // Termék törlése ID alapján
+  public deleteProduct(id: number): boolean {
+    const index = this._products.findIndex(p => p.id === id);
+    if (index === -1) return false;
+
+    this._products.splice(index, 1);
+    return true;
+  }
+
+  // --- SZŰRÉSEK ÉS KERESÉSEK ---
+
+  // Keresés név vagy leírás alapján (kis/nagybetű független)
+  public search(query: string): Product[] {
+    const lowerQuery = query.toLowerCase();
+    return this._products.filter(p => 
+      p.name.toLowerCase().includes(lowerQuery) || 
+      p.description.toLowerCase().includes(lowerQuery)
+    );
+  }
+
+  // Szűrés kategória szerint
+  public getByCategory(category: string): Product[] {
+    return this._products.filter(p => p.category.toLowerCase() === category.toLowerCase());
+  }
+
+  // Csak az aktív és raktáron lévő termékek lekérése
+  public getAvailableProducts(): Product[] {
+    return this._products.filter(p => p.active && p.stock > 0);
+  }
+
+  // --- CSOPORTOS MŰVELETEK ÉS STATISZTIKÁK ---
+
+  // Globális kedvezmény érvényesítése egy adott kategóriára (pl. minden Laptopra -10%)
+  public applyCategoryDiscount(category: string, percentage: number): void {
+    this._products
+      .filter(p => p.category.toLowerCase() === category.toLowerCase())
+      .forEach(p => p.applyDiscount(percentage));
+  }
+
+  // Teljes raktárkészlet értékének kiszámítása
+  public getTotalInventoryValue(): number {
+    return this._products.reduce((total, p) => total + (p.price * p.stock), 0);
+  }
+}
 
