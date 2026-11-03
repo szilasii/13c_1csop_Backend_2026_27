@@ -151,11 +151,11 @@ export class ProductManager {
   // --- GETTEREK ---
 
   // Visszaadja az összes terméket tiszta IProduct tömbként (biztonságos exportáláshoz)
-  async allProductsData(): Promise<IProduct[]> {
+  public async allProductsData(): Promise<IProduct[]> {
     try {
       const conn = await mysql.createConnection(config);
       const [rows] = await conn.execute("SELECT * FROM products");
-      await conn.end();
+      await conn.end(); // Debugging line to check the fetched products
       return rows as IProduct[];
     } catch (error) {
       console.error("Hiba a termékek lekérésekor:", error);
@@ -171,14 +171,31 @@ export class ProductManager {
   // Új termék hozzáadása
   public async addProduct(productData: Partial<Product>) {
     
-   
+   try {
+      const conn = await mysql.createConnection(config);
+      const result:any = await conn.query("INSERT INTO products values(null, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)", 
+        [productData.name, productData.category, productData.brand, productData.price, productData.currency, productData.stock, productData.rating, productData.active, productData.description, productData.image]);
+      await conn.end(); // Debugging line to check the fetched products
+      return result[0].insertId; // Visszaadjuk az újonnan beszúrt termék ID-ját
+    } catch (error) {
+      console.error("Hiba a termékek lekérésekor:", error);
+      return undefined;
+    }  
 
    
   }
 
   // Termék lekérése ID alapján
-  public getProductById(id: number) {
-   
+  public async getProductById(id: number) {
+   try {
+      const conn = await mysql.createConnection(config);
+      const [rows]: [IProduct[]] = await conn.execute("SELECT * FROM products WHERE id = ?", [id]) as unknown as [IProduct[]];
+      await conn.end(); // Debugging line to check the fetched products
+      return rows[0] as IProduct | undefined;
+    } catch (error) {
+      console.error("Hiba a termékek lekérésekor:", error);
+      return undefined  ;
+    }  
   }
 
   // Termék frissítése
