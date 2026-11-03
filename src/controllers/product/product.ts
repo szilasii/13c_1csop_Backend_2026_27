@@ -1,3 +1,6 @@
+import mysql from "mysql2/promise";
+import config from "../../app/config.ts";
+
 export interface IProduct {
   id: number;
   name: string;
@@ -139,108 +142,81 @@ export class Product implements IProduct {
 
 export class ProductManager {
   // Belsőleg Product osztálypéldányok tömbjeként tároljuk a gazdag funkciók miatt
-  private _products: Product[] = [];
+  //private _products: Product[] = [];
 
-  constructor(initialProducts: Partial<IProduct>[] = []) {
-    this._products = initialProducts.map(p => new Product(p));
-  }
+  // constructor(initialProducts: Partial<IProduct>[] = []) {
+  //   this._products = initialProducts.map(p => new Product(p));
+  // }
 
   // --- GETTEREK ---
 
   // Visszaadja az összes terméket tiszta IProduct tömbként (biztonságos exportáláshoz)
-  get allProductsData(): IProduct[] {
-    return this._products.map((p : Product) => p.toJSON());
+  async allProductsData(): Promise<IProduct[]> {
+    try {
+      const conn = await mysql.createConnection(config);
+      const [rows] = await conn.execute("SELECT * FROM products");
+      await conn.end();
+      return rows as IProduct[];
+    } catch (error) {
+      console.error("Hiba a termékek lekérésekor:", error);
+      return [];
+    }    
   }
 
   // Visszaadja a belső Product példányok tömbjét (ha közvetlenül a metódusaikat akarjuk hívni)
-  get products(): Product[] {
-    return this._products;
-  }
+ 
 
   // --- CRUD MŰVELETEK ---
 
   // Új termék hozzáadása
-  public addProduct(productData: Partial<Product>): number {
-    const product = new Product(productData);
-    Object.keys(productData).forEach((key) => {
-      const propKey = key as keyof IProduct;
-      if (propKey !== 'id' && productData[propKey] !== undefined) {
-        // TypeScript típusbiztonság megtartásával dinamikusan beállítjuk az értéket
-        (product as any)[propKey] = productData[propKey];
-      }
-    });
+  public async addProduct(productData: Partial<Product>) {
+    
+   
 
-    // Egyszerű ID generálás, ha nincs megadva
-      const maxId = this._products.reduce((max, p) => p.id > max ? p.id : max, 0);
-      product.id = maxId + 1;
-      this._products.push(product as Product);
-      return product.id;
+   
   }
 
   // Termék lekérése ID alapján
-  public getProductById(id: number): Product | undefined {
-    return this._products.find(p => p.id === id);
+  public getProductById(id: number) {
+   
   }
 
   // Termék frissítése
-  public updateProduct(id: number, updatedData: Partial<IProduct>): boolean {
-    const product = this.getProductById(id);
-    if (!product) return false;
-
-    Object.keys(updatedData).forEach((key) => {
-      const propKey = key as keyof IProduct;
-      if (propKey !== 'id' && updatedData[propKey] !== undefined) {
-        // TypeScript típusbiztonság megtartásával dinamikusan beállítjuk az értéket
-        console.log(propKey, updatedData[propKey]); // Debugging line to check the property and its value
-        (product as any)[propKey] = updatedData[propKey];
-      }
-    });
-
-    return true;
+  public updateProduct(id: number, updatedData: Partial<IProduct>) {
+    
   }
 
   // Termék törlése ID alapján
-  public deleteProduct(id: number): boolean {
-    const index = this._products.findIndex(p => p.id === id);
-    if (index === -1) return false;
-
-    this._products.splice(index, 1);
-    return true;
+  public deleteProduct(id: number) {
+   
   }
 
   // --- SZŰRÉSEK ÉS KERESÉSEK ---
 
   // Keresés név vagy leírás alapján (kis/nagybetű független)
-  public search(query: string): Product[] {
-    const lowerQuery = query.toLowerCase();
-    return this._products.filter(p => 
-      p.name.toLowerCase().includes(lowerQuery) || 
-      p.description.toLowerCase().includes(lowerQuery)
-    );
+  public search(query: string) {
+   
   }
 
   // Szűrés kategória szerint
-  public getByCategory(category: string): Product[] {
-    return this._products.filter(p => p.category.toLowerCase() === category.toLowerCase());
+  public getByCategory(category: string) {
+   
   }
 
   // Csak az aktív és raktáron lévő termékek lekérése
-  public getAvailableProducts(): Product[] {
-    return this._products.filter(p => p.active && p.stock > 0);
+  public getAvailableProducts() {
+   
   }
 
   // --- CSOPORTOS MŰVELETEK ÉS STATISZTIKÁK ---
 
   // Globális kedvezmény érvényesítése egy adott kategóriára (pl. minden Laptopra -10%)
   public applyCategoryDiscount(category: string, percentage: number): void {
-    this._products
-      .filter(p => p.category.toLowerCase() === category.toLowerCase())
-      .forEach(p => p.applyDiscount(percentage));
+   
   }
 
   // Teljes raktárkészlet értékének kiszámítása
-  public getTotalInventoryValue(): number {
-    return this._products.reduce((total, p) => total + (p.price * p.stock), 0);
-  }
+  public getTotalInventoryValue() {
+   
 }
-
+}

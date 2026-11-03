@@ -21,7 +21,9 @@
   },
   "dependencies": {
     "body-parser": "^2.3.0",
-    "express": "^5.2.1"
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "mysql2": "^3.24.6"
   },
   "files": [
     "./bin/*",
@@ -30,12 +32,13 @@
   "typings": "./lib/index.d.ts",
   "devDependencies": {
     "@types/body-parser": "^1.19.6",
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
-    "@types/node": "^26.4.1",
+    "@types/node": "^26.6.6",
     "dotenv": "^18.0.4",
-    "nodemon": "^3.1.14",
+    "nodemon": "^1.0.2",
     "tsc": "^2.0.4",
-    "tslint": "^5.20.1",
+    "tslint": "^3.1.1",
     "typescript": "^7.0.2"
   }
 }
