@@ -30,7 +30,7 @@ export const getProductById = async (req:Request,res:Response):Promise<void> => 
     res.send(product)
 }
 
-export const updateProduct = async  (req:Request,res:Response):void => {
+export const updateProduct = async  (req:Request,res:Response):Promise<void> => {
    
 }
 
