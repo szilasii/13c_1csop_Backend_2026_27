@@ -39,9 +39,9 @@ export const updateProductPatch = (req:Request,res:Response):void => {
 }
 
 export const deleteProduct = async (req:Request,res:Response):Promise<void> => {
-   const {id}  = req.body
+   const { id } = req.params
    const productManager = new ProductManager
-   const deleted = await productManager.deleteProduct(id)
+   const deleted = await productManager.deleteProduct(Number(id))
    if (deleted) {
        res.status(204).send({ message: "Product deleted successfully" });
    } else {
