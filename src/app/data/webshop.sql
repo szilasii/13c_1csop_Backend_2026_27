@@ -1,3 +1,7 @@
+-- Active: 1741853165177@@127.0.0.1@3306@webshop
+created database webshop COLLATE utf8mb4_unicode_ci;
+use webshop;
+
 CREATE TABLE products (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(150) NOT NULL,

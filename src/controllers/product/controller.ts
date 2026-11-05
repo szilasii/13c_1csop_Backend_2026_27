@@ -30,7 +30,7 @@ export const getProductById = async (req:Request,res:Response):Promise<void> => 
     res.send(product)
 }
 
-export const updateProduct = (req:Request,res:Response):void => {
+export const updateProduct = async  (req:Request,res:Response):void => {
    
 }
 
@@ -38,8 +38,15 @@ export const updateProductPatch = (req:Request,res:Response):void => {
      
 }
 
-export const deleteProduct = (req:Request,res:Response):void => {
-   
+export const deleteProduct = async (req:Request,res:Response):Promise<void> => {
+   const {id}  = req.body
+   const productManager = new ProductManager
+   const deleted = await productManager.deleteProduct(id)
+   if (deleted) {
+       res.status(204).send({ message: "Product deleted successfully" });
+   } else {
+       res.status(404).send({ message: "Product not found" });
+   }
 }
 
 const  checkRequiredFields = (body: IProduct,product: IProduct): boolean => {

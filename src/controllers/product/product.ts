@@ -1,4 +1,4 @@
-import mysql from "mysql2/promise";
+import mysql, { type ResultSetHeader } from "mysql2/promise";
 import config from "../../app/config.ts";
 
 export interface IProduct {
@@ -204,8 +204,16 @@ export class ProductManager {
   }
 
   // Termék törlése ID alapján
-  public deleteProduct(id: number) {
-   
+  public async deleteProduct(id: number) {
+    try {
+      const conn = await mysql.createConnection(config);
+      const [result] = await conn.query("DELETE FROM products WHERE id = ?", [id]);
+      await conn.end();
+      return (result as ResultSetHeader).affectedRows > 0;
+    } catch (error) {
+      console.error("Hiba a termék törlésekor:", error);
+      return undefined;
+    }
   }
 
   // --- SZŰRÉSEK ÉS KERESÉSEK ---
