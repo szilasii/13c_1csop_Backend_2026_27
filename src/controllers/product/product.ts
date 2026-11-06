@@ -199,8 +199,31 @@ export class ProductManager {
   }
 
   // Termék frissítése
-  public updateProduct(id: number, updatedData: Partial<IProduct>) {
-    
+  public async updateProduct(id: number, updatedData: Partial<IProduct>) {
+    try {
+      const getProduct = await this.getProductById(id);
+      if (!getProduct) {
+         const newProductId = await this.addProduct(updatedData as unknown as Product);
+         if (!newProductId) {
+            throw new Error("Failed to add product")
+         }
+         const getNewProduct = await this.getProductById(newProductId);
+         return getNewProduct;
+      }
+      delete updatedData.id; // Az ID-t nem szabad frissíteni
+      Object.assign(getProduct, updatedData); 
+      const conn = await mysql.createConnection(config);
+      const [result] = await conn.query("UPDATE products SET ? WHERE id = ?", [getProduct, id]);
+      conn.end();
+      console.log("Update result:", result); // Debugging line to check the update result
+      if ((result as ResultSetHeader).affectedRows === 0) {
+        throw new Error("Product not found or no changes made");
+      }
+      return getProduct; // Visszaadjuk a frissített terméket
+    } catch (error) {
+      console.error("Hiba a termék frissítésekor:", error);
+      return undefined;
+    }
   }
 
   // Termék törlése ID alapján
