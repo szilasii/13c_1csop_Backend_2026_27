@@ -141,14 +141,6 @@ export class Product implements IProduct {
 
 
 export class ProductManager {
-  // Belsőleg Product osztálypéldányok tömbjeként tároljuk a gazdag funkciók miatt
-  //private _products: Product[] = [];
-
-  // constructor(initialProducts: Partial<IProduct>[] = []) {
-  //   this._products = initialProducts.map(p => new Product(p));
-  // }
-
-  // --- GETTEREK ---
 
   // Visszaadja az összes terméket tiszta IProduct tömbként (biztonságos exportáláshoz)
   public async allProductsData(): Promise<IProduct[]> {
@@ -160,66 +152,53 @@ export class ProductManager {
     } catch (error) {
       console.error("Hiba a termékek lekérésekor:", error);
       return [];
-    }    
+    }
   }
 
-  // Visszaadja a belső Product példányok tömbjét (ha közvetlenül a metódusaikat akarjuk hívni)
- 
 
   // --- CRUD MŰVELETEK ---
 
   // Új termék hozzáadása
-  public async addProduct(productData: Partial<Product>) {
-    
-   try {
+  public async createProduct(productData: Partial<Product>) {
+
+    try {
       const conn = await mysql.createConnection(config);
-      const result:any = await conn.query("INSERT INTO products values(null, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)", 
+      const result: any = await conn.query("INSERT INTO products values(null, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)",
         [productData.name, productData.category, productData.brand, productData.price, productData.currency, productData.stock, productData.rating, productData.active, productData.description, productData.image]);
       await conn.end(); // Debugging line to check the fetched products
       return result[0].insertId; // Visszaadjuk az újonnan beszúrt termék ID-ját
     } catch (error) {
       console.error("Hiba a termékek lekérésekor:", error);
       return undefined;
-    }  
+    }
 
-   
+
   }
 
   // Termék lekérése ID alapján
   public async getProductById(id: number) {
-   try {
+    try {
       const conn = await mysql.createConnection(config);
       const [rows]: [IProduct[]] = await conn.execute("SELECT * FROM products WHERE id = ?", [id]) as unknown as [IProduct[]];
       await conn.end(); // Debugging line to check the fetched products
       return rows[0] as IProduct | undefined;
     } catch (error) {
       console.error("Hiba a termékek lekérésekor:", error);
-      return undefined  ;
-    }  
+      return undefined;
+    }
   }
 
   // Termék frissítése
   public async updateProduct(id: number, updatedData: Partial<IProduct>) {
     try {
-      const getProduct = await this.getProductById(id);
-      if (!getProduct) {
-         const newProductId = await this.addProduct(updatedData as unknown as Product);
-         if (!newProductId) {
-            throw new Error("Failed to add product")
-         }
-         const getNewProduct = await this.getProductById(newProductId);
-         return getNewProduct;
-      }
-      delete updatedData.id; // Az ID-t nem szabad frissíteni
-      Object.assign(getProduct, updatedData); 
       const conn = await mysql.createConnection(config);
-      const [result] = await conn.query("UPDATE products SET ? WHERE id = ?", [getProduct, id]);
+      const [result] = await conn.query("UPDATE products SET ? WHERE id = ?", [updatedData, id]);
       conn.end();
       console.log("Update result:", result); // Debugging line to check the update result
       if ((result as ResultSetHeader).affectedRows === 0) {
         throw new Error("Product not found or no changes made");
       }
-      return getProduct; // Visszaadjuk a frissített terméket
+      return await this.getProductById(id); // Visszaadjuk a frissített terméket
     } catch (error) {
       console.error("Hiba a termék frissítésekor:", error);
       return undefined;
@@ -243,28 +222,28 @@ export class ProductManager {
 
   // Keresés név vagy leírás alapján (kis/nagybetű független)
   public search(query: string) {
-   
+
   }
 
   // Szűrés kategória szerint
   public getByCategory(category: string) {
-   
+
   }
 
   // Csak az aktív és raktáron lévő termékek lekérése
   public getAvailableProducts() {
-   
+
   }
 
   // --- CSOPORTOS MŰVELETEK ÉS STATISZTIKÁK ---
 
   // Globális kedvezmény érvényesítése egy adott kategóriára (pl. minden Laptopra -10%)
   public applyCategoryDiscount(category: string, percentage: number): void {
-   
+
   }
 
   // Teljes raktárkészlet értékének kiszámítása
   public getTotalInventoryValue() {
-   
-}
+
+  }
 }
